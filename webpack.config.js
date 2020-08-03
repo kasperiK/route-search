@@ -2,7 +2,7 @@ const path = require("path");
 const webpack = require("webpack");
 
 module.exports = {
-  entry: "./src/index.js",
+  entry: ['react-hot-loader/patch', './src/index.js'],
   mode: "development",
   module: {
     rules: [
@@ -16,9 +16,12 @@ module.exports = {
         test: /\.css$/,
         use: ["style-loader", "css-loader"]
       }
-    ]
+	],
   },
-  resolve: { extensions: ["*", ".js", ".jsx"] },
+  resolve: {
+	  alias: { 'react-dom': '@hot-loader/react-dom'  },
+	  extensions: ["*", ".js", ".jsx"]
+	},
   output: {
     path: path.resolve(__dirname, "dist/"),
     publicPath: "/dist/",
@@ -30,5 +33,6 @@ module.exports = {
     publicPath: "http://localhost:3000/dist/",
     hotOnly: true
   },
+  devtool: 'eval-source-map',
   plugins: [new webpack.HotModuleReplacementPlugin()]
 };
