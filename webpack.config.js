@@ -1,9 +1,17 @@
 const path = require("path");
 const webpack = require("webpack");
+const HtmlWebPackPlugin = require('html-webpack-plugin');
+const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+const { CleanWebpackPlugin } = require('clean-webpack-plugin');
+
+const outputDir = 'dist';
 
 module.exports = {
-  entry: ['react-hot-loader/patch', './src/index.js'],
-  mode: "development",
+  entry: './src/client/index.js',
+  output: {
+	path: path.join(__dirname, outputDir),
+	filename: "bundle.js",
+  },
   module: {
     rules: [
       {
@@ -14,7 +22,7 @@ module.exports = {
       },
       {
         test: /\.css$/,
-        use: ["style-loader", "css-loader"]
+        use: ["style-loader", "css-loader"],
       }
 	],
   },
@@ -22,17 +30,32 @@ module.exports = {
 	  alias: { 'react-dom': '@hot-loader/react-dom'  },
 	  extensions: ["*", ".js", ".jsx"]
 	},
-  output: {
-    path: path.resolve(__dirname, "dist/"),
-    publicPath: "/dist/",
-    filename: "bundle.js"
-  },
   devServer: {
-    contentBase: path.join(__dirname, "public/"),
     port: 3000,
-    publicPath: "http://localhost:3000/dist/",
+	open: true,
+	proxy: {
+		'/api':	'http://localhost:8080'
+	},
     hotOnly: true
   },
   devtool: 'eval-source-map',
-  plugins: [new webpack.HotModuleReplacementPlugin()]
+  plugins: [
+	  new webpack.HotModuleReplacementPlugin(),
+	  new CleanWebpackPlugin({ cleanOnceBeforeBuildPatterns: [outputDir] }),
+	  new HtmlWebPackPlugin({
+		template: './src/client/index.html',
+	  }),
+	  new MiniCssExtractPlugin({
+		filename: '[name].css',
+		chunkFilename: '[id].css'
+	  })
+	],
+	stats: {
+		assetsSort: '!size',
+		children: false,
+		chunks: false,
+		colors: true,
+		entrypoints: false,
+		modules: false
+	}
 };
