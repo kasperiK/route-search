@@ -5,8 +5,8 @@
   "main": "index.js",
   "scripts": {
     "server": "nodemon src/server/index.js --watch src/server",
-	"webpack-dev-server": "webpack-dev-server --mode development",
-	"dev": "concurrently \"npm run server\" \"npm run webpack-dev-server\"",
+    "webpack-dev-server": "webpack-dev-server --mode development",
+    "dev": "concurrently \"npm run server\" \"npm run webpack-dev-server\"",
     "build": "webpack --mode production",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -15,7 +15,9 @@
   "devDependencies": {
     "@babel/cli": "^7.10.5",
     "@babel/core": "^7.11.0",
+    "@babel/polyfill": "^7.10.4",
     "@babel/preset-env": "^7.11.0",
+    "@babel/preset-es2015": "^7.0.0-beta.53",
     "@babel/preset-react": "^7.10.4",
     "babel-loader": "^8.1.0",
     "clean-webpack-plugin": "^3.0.0",
@@ -29,11 +31,11 @@
     "webpack-dev-server": "^3.11.0"
   },
   "dependencies": {
-    "@hot-loader/react-dom": "^16.13.0",
+    "@material-ui/core": "^4.11.0",
+    "@material-ui/lab": "^4.0.0-alpha.56",
     "concurrently": "^5.2.0",
     "express": "^4.17.1",
-    "react": "^16.13.1",
-    "react-dom": "^16.13.1",
-    "react-hot-loader": "^4.12.21"
+    "react": "^16.13.0",
+    "react-dom": "^16.13.0"
   }
 }

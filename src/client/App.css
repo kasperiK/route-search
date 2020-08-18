@@ -1,4 +1,60 @@
-.App {
-	margin: 1rem;
-	font-family: Arial, Helvetica, sans-serif;
+* {
+	box-sizing: border-box;
+}
+
+.RouteContainer {
+	font-family: "Roboto", Arial, Helvetica, sans-serif;
+	margin: 0 auto;
+	padding: 1rem;
+	width: 100%;
+	max-width: 900px;
+}
+
+.RouteHeader {
+	text-align: center;
+	margin-bottom: 2rem;
+	color: #2b3b96;
+}
+
+.Search {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	flex-direction: column;
+}
+
+.Search__Boxes {
+	display: flex;
+	justify-content: space-between;
+	flex-direction: column;
+}
+
+.Search__Box {
+	flex: 0 0 100%;
+	width: 100%;
+	margin-bottom: 1rem;
+}
+
+.Search__Button {
+	width: 300px;
+	height: 56px;
+}
+
+.SearchResults {
+	margin-top: 3rem;
+}
+
+@media only screen and (min-width: 620px) {
+	.Search__Boxes {
+		flex-direction: row;
+		margin-bottom: 1rem;
+	}
+	.Search__Box {
+		flex: 0 0 47.5%;
+		width: 47.5%;
+	}
+	.Search__Button {
+		display: flex;
+		align-self: stretch;
+	}
 }

@@ -14,6 +14,10 @@ const port = process.env.PORT || 8080;
  */
 app.use(express.static('dist'));
 
+app.get('*', (req, res) =>
+	res.sendFile(path.resolve(__dirname, '../../routeinfo.json'))
+);
+
 /**
  * production mode
  */
@@ -22,7 +26,7 @@ if (process.env.NODE_ENV === 'production') {
 	app.use(express.static(path.resolve(__dirname, 'dist')));
 	// Handle React routing, return all requests to React app
 	app.get('*', (req, res) =>
-		res.sendFile(path.resolve(__dirname, 'dist/index.html'))
+		res.sendFile(path.resolve(__dirname, '../../routeinfo.json'))
 	);
 }
 /**
