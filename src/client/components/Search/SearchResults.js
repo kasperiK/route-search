@@ -1,63 +1,123 @@
 import React, { useEffect, useState } from "react";
+import SearchResultsList from './SearchResultsList';
 
 const SearchResults = props => {
 	const lines = props.data.linjastot;
 	const roads = props.data.tiet;
 	const shortestPath = props.shortestPath;
+	const [linesAndStops, setLinesAndStops] = useState(null);
+	const [linesStopsDistances, setLinesStopsDistances] = useState(null);
 
 	const findCorrectLines = shortestPath => {
-		const origPath = shortestPath.path;
 		let path = Array.from(shortestPath.path);
+		let filteredLines = [];
 		let linesAndStops = [];
-		const stopsWithNoLine = [];
-		let allLinesFound = false;
-		console.log(lines);
-		console.log(path);
-		const stopsInSameLine = path => {
-			for (let line in lines) {
-				console.log(path);
-				const stopsInSameLine = path.every(stop => lines[line].includes(stop));
-				if (stopsInSameLine) {
-					linesAndStops.push({'stops': path, line});
-				}
-			}
-		};
-		stopsInSameLine(path);
-		while (!allLinesFound) {
-			if (linesAndStops.length === 0) {
-				stopsWithNoLine.push(path.pop());
-				stopsInSameLine(path);
-			}	else {
-				stopsWithNoLine.sort((a, b) => origPath.indexOf(a) - origPath.indexOf(b));
-				const stopsWithNoLineFiltered = stopsWithNoLine.filter(stop => {
-					const stopWithLine = linesAndStops.some(line => {
-						console.log(line.stops);
-						console.log(stop);
-						return line.stops.includes(stop)
-					});
-					if (!stopWithLine) return stop;
-				});
-				console.log(stopsWithNoLineFiltered);
-				if (stopsWithNoLineFiltered.length === 0) {
-					allLinesFound = true;
-				}	else {
-					console.log('pysäk');
-					console.log(path);
-					// PATHI EI TOIMI YLI KAHELLA LINJALLA
-					path = [path[path.length - 1], ...stopsWithNoLineFiltered];
-					console.log(path);
-					stopsInSameLine(path);
-					if (path.length > 4) path.pop();
-				}
-			}
+		for (let line in lines) {
+			const stopsInSameLine = path.filter(stop => lines[line].includes(stop));
+			if (stopsInSameLine.length > 1)	filteredLines.push({line, 'stops': stopsInSameLine});
 		}
-		console.log(linesAndStops);
+		filteredLines.forEach(obj => {
+			const stops = obj.stops;
+			if (path.every(stop => stops.includes(stop))) linesAndStops.push(obj);
+		});
+		if (linesAndStops.length !== 0) {
+			setLinesAndStops(linesAndStops);
+		}	else {
+			const getStopsInSameLine = pathParam => {
+				let linesAndStopsArr = [];
+				filteredLines.forEach(obj => {
+					const stops = obj.stops;
+					const line = obj.line;
+					if (!linesAndStopsArr[line]) {
+						linesAndStopsArr.push({line, "stops": []});
+					}
+					for (let i = 0; i < stops.length; i++) {
+						const element = stops[i];
+						if (pathParam.includes(element)) {
+							linesAndStopsArr.forEach(item => {
+								if (item.line === line) item.stops.push(element);
+							})
+						}
+					}
+				});
+				linesAndStopsArr = linesAndStopsArr.filter(item => item.stops.length > 0);
+				if (linesAndStopsArr.length > 1) {
+					const getLongestLine = arr => arr.reduce((a, b) => {
+						if (a && b) {
+							return a.stops.length > b.stops.length ? a : b;
+						}
+					});
+					let longestLineLength = getLongestLine(linesAndStopsArr);
+					longestLineLength = longestLineLength.stops.length;
+					const linesAndStopsFilteredByOrder = linesAndStopsArr.filter(obj => obj.stops.every((stop, i) => {
+						if (pathParam[i] === stop) {
+							return stop;
+						}
+					}));
+					if (linesAndStopsFilteredByOrder.length > 1) {
+						linesAndStopsArr = linesAndStopsFilteredByOrder.filter(item => {
+							if (item.stops.length >= longestLineLength) {
+								return item;
+							}
+						});
+					}	else {
+						linesAndStopsArr = linesAndStopsFilteredByOrder;
+					}
+					path = [linesAndStopsArr[0].stops[linesAndStopsArr[0].stops.length -1], ...pathParam.filter(item => !linesAndStopsArr[0].stops.includes(item))];
+				}	else {
+					linesAndStopsArr = linesAndStopsArr[0];
+				}
+				linesAndStops.push(...linesAndStopsArr);
+			};
+			while (path.length > 1) {
+				getStopsInSameLine(path);
+			}
+			setLinesAndStops(linesAndStops);
+		}
 	};
 
-	findCorrectLines(shortestPath);
+	const setDistanceBetweenStops = linesAndStops => {
+		const modifiedRoads = roads.map(road => {
+			const modifiedObj = {'road': [road.mista, road.mihin], 'distance': road.kesto};
+			return modifiedObj;
+		});
+		linesAndStops.forEach(obj => {
+			const stops = obj.stops;
+			stops.forEach((item, i) => {
+				const currentStop = item;
+				const nextStop = stops[i + 1];
+				if (nextStop) {
+					const path = [currentStop, nextStop];
+					const pathDistance = modifiedRoads.filter(obj => path.every(stop => obj.road.includes(stop))).map(item => item.distance)[0];
+					if (path.every(stop => obj.stops.includes(stop))) {
+						let distance = obj.distance;
+						if (distance) {
+							obj.distance = distance + pathDistance;
+						}	else {
+							obj.distance = pathDistance;
+						}
+					}
+				}
+			});
+		});
+		setLinesStopsDistances(linesAndStops);
+	};
+
+	useEffect(() => {
+		findCorrectLines(shortestPath);
+	},[shortestPath]);
+
+	useEffect(() => {
+		if (linesAndStops) {
+			setDistanceBetweenStops(linesAndStops);
+		}
+	},[linesAndStops]);
 
 	return (
-		<div className="SearchResults">Hakutulokset</div>
+		<div className="SearchResults">
+			<h2>Hakutulokset</h2>
+			{linesStopsDistances && <SearchResultsList linesStopsDistances={linesStopsDistances} />}
+		</div>
 	);
 };
 

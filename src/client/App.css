@@ -44,6 +44,10 @@
 	margin-top: 3rem;
 }
 
+.SearchResults h2 {
+	color: #2b3b96;
+}
+
 @media only screen and (min-width: 620px) {
 	.Search__Boxes {
 		flex-direction: row;
