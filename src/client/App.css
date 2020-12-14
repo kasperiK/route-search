@@ -46,6 +46,74 @@
 
 .SearchResults h2 {
 	color: #2b3b96;
+	margin-bottom: 2rem;
+}
+
+.SearchResults__Lines {
+	display: flex;
+}
+
+.SearchResults__Item h4 {
+	margin: 0;
+	margin-bottom: .5rem;
+	font-size: 15px;
+}
+
+.SearchResults__Lines .SearchResults__Line::before {
+	content: '';
+	position: absolute;
+	left: -8px;
+	top: 50%;
+	transform: translateY(-50%);
+	height: 17px;
+	width: 17px;
+	border-radius: 50%;
+	background-color: black;
+	z-index: 1;
+}
+
+.SearchResults__Line {
+	position: relative;
+	height: 8px;
+	border-radius: 8px;
+}
+
+.SearchResults__Lines .SearchResults__Line::after {
+	content: '';
+	position: absolute;
+	right: -8px;
+	top: 50%;
+	transform: translateY(-50%);
+	height: 16px;
+	width: 16px;
+	border-radius: 50%;
+	background-color: black;
+	z-index: 1;
+}
+
+.SearchResults__LineStops {
+	text-align: center;
+	margin-bottom: .75rem;
+}
+
+.SearchResults__LineMultiple {
+	margin-bottom: 1rem;
+}
+
+.SearchResults__Line.vihreä {
+	background-color: green;
+}
+
+.SearchResults__Line.punainen {
+	background-color: red;
+}
+
+.SearchResults__Line.keltainen {
+	background-color: yellow;
+}
+
+.SearchResults__Line.sininen {
+	background-color: blue;
 }
 
 @media only screen and (min-width: 620px) {
@@ -60,5 +128,22 @@
 	.Search__Button {
 		display: flex;
 		align-self: stretch;
+	}
+}
+
+@media only screen and (max-width: 768px) {
+	.SearchResults__Lines {
+		flex-direction: column;
+	}
+	.SearchResults__Item {
+		width: 100% !important;
+		margin-bottom: 2rem;
+		display: flex;
+	}
+	.SearchResults__Item div {
+		width: 100%;
+	}
+	.SearchResults__Item .SearchResults__LineMultiple {
+		width: 50%;
 	}
 }

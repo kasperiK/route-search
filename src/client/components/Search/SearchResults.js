@@ -115,7 +115,6 @@ const SearchResults = props => {
 
 	return (
 		<div className="SearchResults">
-			<h2>Hakutulokset</h2>
 			{linesStopsDistances && <SearchResultsList linesStopsDistances={linesStopsDistances} />}
 		</div>
 	);
